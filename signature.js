@@ -1,6 +1,19 @@
 const crypto = require('crypto');
 
 exports.handler = async (event, context) => {
+    // Ako je OPTIONS zahtev, odgovori sa dozvoljenim CORS headerima
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': 'https://jankos-wondrous-site-79299d.webflow.io', // Omogući tačan domen bez dodatnog /
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+            },
+            body: ''
+        };
+    }
+
     // Parsiranje JSON body-ja
     const { orderId, purchaseTime, totalAmount } = JSON.parse(event.body);
 
@@ -41,10 +54,10 @@ exports.handler = async (event, context) => {
     return {
         statusCode: 200,
         headers: {
-            'Access-Control-Allow-Origin': 'https://jankos-wondrous-site-79299d.webflow.io/', // Omogućava pristup sa svih domena. Zameni '*' sa specifičnim domenom ako želiš ograničenja
+            'Access-Control-Allow-Origin': 'https://jankos-wondrous-site-79299d.webflow.io', // Tačan domen
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
         },
-        body: signature
+        body: JSON.stringify({ signature })
     };
 };
