@@ -1,15 +1,17 @@
-// server-side PHP kod za generisanje potpisa
+<?php
+// Učitajte Merchant ID, Terminal ID, i druge podatke
 $MerchantID = '1732159';
 $TerminalID = 'E7058794';
-$OrderID = $_GET['orderId'];  // Ili uzimanje order ID iz URL-a ili drugog izvora
+$OrderID = $_GET['orderId'];  // Uzmi Order ID iz GET parametara ili drugih izvora
 $PurchaseTime = $_GET['purchaseTime'];  // Datum i vreme
 $TotalAmount = $_GET['totalAmount'];  // Iznos
 $CurrencyID = 941;  // RSD
-$Delay = 1;  // Postavite Delay na 1
+$Delay = 1;  // Delay postavljen na 1 (TRUE)
 
-$data = "$MerchantID;$TerminalID;$PurchaseTime;$OrderID,$Delay;$CurrencyID;,$TotalAmount;;";
+// Generisanje $data stringa prema vašim zahtevima
+$data = "$MerchantID;$TerminalID;$PurchaseTime;$OrderID,$Delay;$CurrencyID,;$TotalAmount,;";
 
-// Učitavanje privatnog ključa
+// Učitajte privatni ključ
 $privKey = file_get_contents('path_to_your_private_key.pem');
 $pkeyid = openssl_get_privatekey($privKey);
 
@@ -20,4 +22,6 @@ openssl_free_key($pkeyid);
 // Baze64 enkodovanje potpisa
 $b64sign = base64_encode($signature);
 
+// Ispisivanje potpisa
 echo $b64sign;
+?>
