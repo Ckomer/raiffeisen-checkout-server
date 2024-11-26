@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 
 exports.handler = async (event, context) => {
-    // Parsiranje query parametara
-    const { orderId, purchaseTime, totalAmount } = event.queryStringParameters;
+    // Parsiranje JSON body-ja
+    const { orderId, purchaseTime, totalAmount } = JSON.parse(event.body);
 
     // Hardkodirane vrednosti kao u PHP kodu
     const MerchantID = '1732159';
