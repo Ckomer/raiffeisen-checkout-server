@@ -37,9 +37,14 @@ exports.handler = async (event, context) => {
     sign.end();
     const signature = sign.sign(privateKey, 'base64');
 
-    // Vrati signature kao response
+    // Vrati signature kao response sa CORS headerima
     return {
         statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': 'https://jankos-wondrous-site-79299d.webflow.io/', // Omogućava pristup sa svih domena. Zameni '*' sa specifičnim domenom ako želiš ograničenja
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+        },
         body: signature
     };
 };
