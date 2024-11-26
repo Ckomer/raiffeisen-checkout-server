@@ -1,4 +1,8 @@
+
 <?php
+header("Access-Control-Allow-Origin: https://jankos-wondrous-site-79299d.webflow.io"); // Omogućava pristup sa bilo koje domene, možete specifično dozvoliti samo vaš domen npr: "https://jankos-wondrous-site-79299d.webflow.io"
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 // Učitajte Merchant ID, Terminal ID, i druge podatke
 $MerchantID = '1732159';
 $TerminalID = 'E7058794';
