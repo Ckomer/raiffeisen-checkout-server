@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
     // Ako je OPTIONS zahtev, odgovori sa dozvoljenim CORS headerima
     if (event.httpMethod === 'OPTIONS') {
         return {
@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
     const Delay = 1;
 
     // Generisanje stringa sa podacima
-    const data = `${MerchantID};${TerminalID};${purchaseTime};${orderId},${Delay};${CurrencyID},;${totalAmount},;`;
+    const data = `${MerchantID};${TerminalID};${purchaseTime};${orderId};${Delay};${CurrencyID},;${totalAmount},;`;
 
     // Učitaj privatni ključ
     const privateKey = `-----BEGIN PRIVATE KEY-----
