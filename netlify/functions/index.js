@@ -2,32 +2,34 @@ const { signature } = require("./lib/Sign");
 const { transactionState } = require("./lib/transaction-state");
 const { reversal } = require("./lib/reversal");
 
-const handleCORS = (response) => {
-  response.setHeader('Access-Control-Allow-Origin', '*'); // Dozvoljava pristup sa svih domena (ili zameniti '*' sa Webflow domenom, npr. 'https://jankos-wondrous-site-79299d.webflow.io')
-  response.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  return response;
+const handleCORS = (headers) => {
+  // Dodaj CORS zaglavlja u odgovor
+  headers['Access-Control-Allow-Origin'] = '*';  // Zameniti sa Webflow domenom ako je potrebno
+  headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
+  headers['Access-Control-Allow-Headers'] = 'Content-Type';
 };
 
 exports.handler = async function(event, context) {
-  // Dodajte CORS header-e za preflight (OPTIONS) i ostale HTTP metode
+  // CORS handling za OPTIONS metod
   if (event.httpMethod === 'OPTIONS') {
-    const response = {
-      statusCode: 204,
+    const headers = {};
+    handleCORS(headers); // Dodaj CORS zaglavlja
+    return {
+      statusCode: 204, // Preflight odgovor
+      headers,
       body: JSON.stringify({ message: 'Preflight request allowed' })
     };
-    return handleCORS(response);
   }
 
-  // Ostatak koda za obradu POST zahteva
-  const response = {
+  const headers = {}; // Zaglavlja odgovora
+  handleCORS(headers); // Dodaj CORS zaglavlja
+
+  let response = {
     statusCode: 200,
+    headers,
     body: JSON.stringify({ message: 'Success' })
   };
 
-  handleCORS(response);
-
-  // Obrada POST zahteva sa različitim akcijama
   if (event.httpMethod === 'POST') {
     const body = JSON.parse(event.body);
 
@@ -46,5 +48,5 @@ exports.handler = async function(event, context) {
     }
   }
 
-  return response;
+  return response; // Vraća odgovor sa CORS zaglavljima
 };
