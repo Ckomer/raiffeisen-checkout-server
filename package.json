@@ -4,7 +4,12 @@
   "scripts": {
     "build": "netlify deploy --build"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "jws": "^4.0.0",
+    "crypto": "^1.0.1"
   }
 }
