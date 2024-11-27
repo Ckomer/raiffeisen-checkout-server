@@ -1,0 +1,12 @@
+{
+  "name": "upc-payment-sdk",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "jws": "^4.0.0"
+  }
+}
