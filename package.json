@@ -1,15 +1,12 @@
 {
-  "name": "main-project",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "netlify deploy --build"
-  },
-  "engines": {
-    "node": "14.x"
-  },
+  "name": "upc-payment-sdk",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "jws": "^4.0.0",
-    "crypto": "^1.0.1"
+    "crypto": "^1.0.1",
+    "jws": "^4.0.0"
   }
 }
