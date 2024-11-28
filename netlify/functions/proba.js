@@ -8,17 +8,19 @@ app.use(express.json());
 
 // Omogućavanje CORS-a za sve zahteve
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Dozvoli sve domene
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Dozvoli sve metode
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Dozvoli specifična zaglavlja
-    // Ako je zahtev OPTIONS (preflight), odmah odgovori sa statusom 200
-    if (req.method === 'POST' || req.method === 'OPTIONS') {
-        return res.status(200).end();
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    // Odgovaranje na preflight OPTIONS zahteve
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end(); // Preflight zahtevi završavaju ovde
     }
+
     next();
 });
 
-// Privatni ključ za potpisivanje
+// Privatni ključ za potpisivanje (RSA)
 const privateKey = `-----BEGIN PRIVATE KEY-----
         MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOwmLx4+3ofOcvAa
         FEmyhJmPXoYYN4IxJYfys9MJ2i2BW9lCn14Ph7sOWS7GQNAQLU0/3QHi+HCuL9Ub
@@ -34,20 +36,30 @@ const privateKey = `-----BEGIN PRIVATE KEY-----
         J/M7LiBgcJ5AhShqYq23ErLJtNoxECoh0ih3YudpkbozLkhOAGsNAkEAkKNZKB/s
         uE/2jQNLbbcxXJxO/5fsVglxmmYI8cYGcuG32XZTfi8NLobHVyLePLuxq+FwWnpp
         1f8cvJr4PqL/IQ==
-        -----END PRIVATE KEY-----`; // Privatni ključ, mora biti sigurno pohranjen
+        -----END PRIVATE KEY-----`; 
 
 // POST ruter direktno na root '/.netlify/functions/proba'
 app.post('/', (req, res) => {
+    console.log('Received POST request with body:', req.body);
+
     const paymentData = req.body.data;
+
+    if (!paymentData) {
+        return res.status(400).json({ error: "No payment data received" });
+    }
 
     // Priprema podataka za potpisivanje (konvertovanje u string)
     const dataString = `${paymentData.MerchantID};${paymentData.TerminalID};${paymentData.PurchaseTime};${paymentData.OrderID};${paymentData.CurrencyID};${paymentData.TotalAmount};;`;
 
-    // Kreiranje potpisa koristeći HMAC sa SHA-256
-    const signature = crypto.createHmac('sha256', privateKey)
-                             .update(dataString)
-                             .digest('base64');
+    console.log('Data string to sign:', dataString);
 
+    // Kreiranje potpisa koristeći RSA privatni ključ
+    const sign = crypto.createSign('SHA256');
+    sign.update(dataString);
+    const signature = sign.sign(privateKey, 'base64');
+
+    // Vraćanje potpisa kao JSON
+    console.log('Generated signature:', signature);
     res.json({ signature });
 });
 
