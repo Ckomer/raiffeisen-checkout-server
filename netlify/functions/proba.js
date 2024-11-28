@@ -2,18 +2,19 @@ const express = require('express');
 const serverless = require('serverless-http');
 const crypto = require('crypto');
 const app = express();
-const port = 3000;
 
+// Middleware za parsiranje JSON tela zahteva
 app.use(express.json());
 
+// Omogućavanje CORS-a
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); // Dozvoli sve domene
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS'); // Dozvoli sve metode
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Dozvoli sve metode
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Dozvoli specifična zaglavlja
     next();
 });
-const router = express.Router();
 
+// Privatni ključ za potpisivanje
 const privateKey = `-----BEGIN PRIVATE KEY-----
         MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOwmLx4+3ofOcvAa
         FEmyhJmPXoYYN4IxJYfys9MJ2i2BW9lCn14Ph7sOWS7GQNAQLU0/3QHi+HCuL9Ub
@@ -31,7 +32,8 @@ const privateKey = `-----BEGIN PRIVATE KEY-----
         1f8cvJr4PqL/IQ==
         -----END PRIVATE KEY-----`; // Privatni ključ, mora biti sigurno pohranjen
 
-app.post('/generate-signature', (req, res) => {
+// POST ruter direktno na root '/.netlify/functions/proba'
+app.post('/', (req, res) => {
     const paymentData = req.body.data;
 
     // Priprema podataka za potpisivanje (konvertovanje u string)
@@ -45,10 +47,5 @@ app.post('/generate-signature', (req, res) => {
     res.json({ signature });
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
-
-app.use('/.netlify/functions/proba', router);
-
+// Expose funkciju za Netlify
 module.exports.handler = serverless(app);
