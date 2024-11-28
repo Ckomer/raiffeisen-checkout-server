@@ -25,9 +25,18 @@ app.use((req, res, next) => {
 app.post('/.netlify/functions/proba', (req, res) => {
     // Privatni ključ za potpisivanje (RSA)
     const fs = require('fs');
-    
-    const privateKey = fs.readFileSync('./netlify/functions/keys/1770000.pem', 'utf8');
-    // Korišćenje privatnog ključa
+    const path = require('path');
+
+    const privateKeyPath = path.join(__dirname, 'keys', '1770000.pem');  // Putanja prema PEM fajlu
+    console.log('Private key path:', privateKeyPath);
+
+    try {
+        const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+        console.log('Private Key Loaded Successfully');
+    } catch (err) {
+        console.error('Error reading private key:', err);
+    }
+
     console.log(privateKey); // Samo za testiranje
 
 
