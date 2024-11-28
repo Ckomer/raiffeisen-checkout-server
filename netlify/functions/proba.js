@@ -12,6 +12,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Dozvoli specifična zaglavlja
     next();
 });
+const router = express.Router();
 
 const privateKey = `-----BEGIN PRIVATE KEY-----
         MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOwmLx4+3ofOcvAa
@@ -47,5 +48,7 @@ app.post('/generate-signature', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+app.use('/.netlify/functions/proba', router);
 
 module.exports.handler = serverless(app);
