@@ -26,7 +26,7 @@ app.post('/.netlify/functions/proba', (req, res) => {
     // Privatni ključ za potpisivanje (RSA)
     const fs = require('fs');
     
-    const privateKey = fs.readFileSync('/netlify/functions/keys/1770000.pem', 'utf8');
+    const privateKey = fs.readFileSync('./netlify/functions/keys/1770000.pem', 'utf8');
     // Korišćenje privatnog ključa
     console.log(privateKey); // Samo za testiranje
 
