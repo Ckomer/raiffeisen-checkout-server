@@ -23,23 +23,15 @@ app.use((req, res, next) => {
 
 // POST ruter direktno na '/.netlify/functions/proba'
 app.post('/.netlify/functions/proba', (req, res) => {
-    // Privatni ključ za potpisivanje (RSA)
-    const fs = require('fs');
-    const path = require('path');
 
-    const privateKeyPath = path.join(__dirname, 'keys', '1770000.pem');  // Putanja prema PEM fajlu
-    console.log('Private key path:', privateKeyPath);
+    // Pristupanje PEM ključu iz environment variable
+    const privateKey = process.env.PRIVATE_KEY;
 
-    try {
-        const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
-        console.log('Private Key Loaded Successfully');
-    } catch (err) {
-        console.error('Error reading private key:', err);
+    if (privateKey) {
+        console.log("Private Key loaded from ENV variable.");
+    } else {
+        console.error("No private key found in ENV variables.");
     }
-
-    console.log(privateKey); // Samo za testiranje
-
-
 
     // Prikazivanje podataka za logovanje
     console.log('Received POST request with body:', req.body);
