@@ -6,11 +6,15 @@ const app = express();
 // Middleware za parsiranje JSON tela zahteva
 app.use(express.json());
 
-// Omogućavanje CORS-a
+// Omogućavanje CORS-a za sve zahteve
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); // Dozvoli sve domene
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Dozvoli sve metode
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Dozvoli specifična zaglavlja
+    // Ako je zahtev OPTIONS (preflight), odmah odgovori sa statusom 200
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
     next();
 });
 
