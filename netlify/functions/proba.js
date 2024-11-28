@@ -15,13 +15,9 @@ app.use((req, res, next) => {
     // Odgovaranje na preflight OPTIONS zahteve
     if (req.method === 'OPTIONS') {
         return res.status(200).end(); // Preflight zahtevi završavaju ovde
-    }
-
-    next();
-});
-
-// Privatni ključ za potpisivanje (RSA)
-const privateKey = `-----BEGIN PRIVATE KEY-----
+    }else if(req.method ==='POST'){
+        // Privatni ključ za potpisivanje (RSA)
+        const privateKey = `-----BEGIN PRIVATE KEY-----
         MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOwmLx4+3ofOcvAa
         FEmyhJmPXoYYN4IxJYfys9MJ2i2BW9lCn14Ph7sOWS7GQNAQLU0/3QHi+HCuL9Ub
         Cw4OjcJ2t8+LJYUPBVIglg7wbpA20VxJyMzctpXqFwp/VnhD8677Ed9P5eOX4A3Q
@@ -38,30 +34,37 @@ const privateKey = `-----BEGIN PRIVATE KEY-----
         1f8cvJr4PqL/IQ==
         -----END PRIVATE KEY-----`; 
 
-// POST ruter direktno na root '/.netlify/functions/proba'
-app.post('/', (req, res) => {
-    console.log('Received POST request with body:', req.body);
+        // POST ruter direktno na root '/.netlify/functions/proba'
 
-    const paymentData = req.body.data;
+        console.log('Received POST request with body:', req.body);
 
-    if (!paymentData) {
+        const paymentData = req.body.data;
+
+        if (!paymentData) {
         return res.status(400).json({ error: "No payment data received" });
+        }
+
+        // Priprema podataka za potpisivanje (konvertovanje u string)
+        const dataString = `${paymentData.MerchantID};${paymentData.TerminalID};${paymentData.PurchaseTime};${paymentData.OrderID};${paymentData.CurrencyID};${paymentData.TotalAmount};;`;
+
+        console.log('Data string to sign:', dataString);
+
+        // Kreiranje potpisa koristeći RSA privatni ključ
+        const sign = crypto.createSign('SHA256');
+        sign.update(dataString);
+        const signature = sign.sign(privateKey, 'base64');
+
+        // Vraćanje potpisa kao JSON
+        console.log('Generated signature:', signature);
+        res.json({ signature });
+
+
     }
 
-    // Priprema podataka za potpisivanje (konvertovanje u string)
-    const dataString = `${paymentData.MerchantID};${paymentData.TerminalID};${paymentData.PurchaseTime};${paymentData.OrderID};${paymentData.CurrencyID};${paymentData.TotalAmount};;`;
-
-    console.log('Data string to sign:', dataString);
-
-    // Kreiranje potpisa koristeći RSA privatni ključ
-    const sign = crypto.createSign('SHA256');
-    sign.update(dataString);
-    const signature = sign.sign(privateKey, 'base64');
-
-    // Vraćanje potpisa kao JSON
-    console.log('Generated signature:', signature);
-    res.json({ signature });
+    next();
 });
+
+
 
 // Expose funkciju za Netlify
 module.exports.handler = serverless(app);
