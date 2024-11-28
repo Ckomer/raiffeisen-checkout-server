@@ -5,6 +5,13 @@ const port = 3000;
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Dozvoli sve domene
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS'); // Dozvoli sve metode
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Dozvoli specifična zaglavlja
+    next();
+});
+
 const privateKey = `-----BEGIN PRIVATE KEY-----
         MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOwmLx4+3ofOcvAa
         FEmyhJmPXoYYN4IxJYfys9MJ2i2BW9lCn14Ph7sOWS7GQNAQLU0/3QHi+HCuL9Ub
